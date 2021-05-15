@@ -1,8 +1,8 @@
 import Head from 'next/head'
-import Image from 'next/image'
+// import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-export default function Home() {
+export default function Home({ blog }) {
   return (
     <div className={styles.container}>
       <Head>
@@ -12,6 +12,15 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        {blog.map(blog => (
+          <h1 className={styles.title}>{blog.title}</h1>
+        ))}
+        <p className={styles.description}>
+          Get started by editing <code className={styles.code}>pages/index.js</code>
+        </p>
+      </main>
+
+      {/* <main className={styles.main}>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
@@ -63,7 +72,21 @@ export default function Home() {
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
-      </footer>
+      </footer> */}
     </div>
   )
 }
+
+export const getStaticProps = async () => {
+  const key = {
+    headers: {'X-API-KEY': process.env.API_KEY},
+  };
+  const data = await fetch('https://dearly.microcms.io/api/v1/blog/', key)
+    .then(res => res.json())
+    .catch(() => null);
+  return {
+    props: {
+      blog: data.contents,
+    },
+  };
+};
